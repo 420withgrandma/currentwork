@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoTimely - Local Bus Station Timetable</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- JS -->
+    <script src="/Frontend/JS/api.js"></script>
+    <script src="/Frontend/JS/app.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/Frontend/CSS/styles.css">
+
+    <!-- Additional custom styles -->
+    <style>
+        /* Page-specific styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-header {
+            background-color: #f9eae1;
+            padding: 120px 0 30px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .page-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .search-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .search-section h5 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .search-btn {
+            background-color: #9A8C98 !important;
+            color: white !important;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-btn:hover {
+            background-color: #867a85 !important;
+        }
+
+        .station-info {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .station-info h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #9A8C98;
+        }
+
+        .station-location {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .facility-badge {
+            background-color: #f2f2f2;
+            color: #2c3e50;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            display: inline-block;
+            font-size: 0.9rem;
+        }
+
+        .timetable-table {
+            margin-top: 20px;
+        }
+
+        .timetable-table th {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .timetable-table tr:hover td {
+            background-color: #f9f9f9;
+        }
+
+        .arrival-soon {
+            background-color: #d4edda !important;
+            font-weight: bold;
+        }
+
+        .arrival-imminent {
+            background-color: #fff3cd !important;
+            font-weight: bold;
+        }
+
+        .main-section {
+            min-height: calc(100vh - 300px);
+            padding: 20px 0;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-name {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .refresh-btn {
+            background-color: #9A8C98;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background-color: #867a85;
+        }
+
+        .no-result-message {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand me-auto company-name" href="index.html"><i class="fa-solid fa-bus"></i> GoTimely</a>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">GoTimely</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
+                            <li class="nav-item dropdown mx-lg-2">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Bus Timetables
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="coachtimetable.html">Coach Journey Timetable</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="localtimetable.html">Local Bus Stations</a></li>
+                                </ul>
+                            </li>
+    
+                            <li class="nav-item dropdown mx-lg-2">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Services & Information
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="ticketinformation.html">Ticket Information</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="travelessentials.html">Travel essentials</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- Search area -->
+                <div class="search-container" style="margin-right: 15px;">
+                    <form class="d-flex" role="search">
+                        <input class="form-control search-input me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success search-button" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </div>
+    
+                <!-- Authentication buttons - These will be shown/hidden by navbar.js -->
+                <a href="auth.html" class="login-button" id="authButton">Login</a>
+                <a href="userprofile.html" class="login-button hidden" id="profileButton" style="background-color: #4a5759;">My Profile</a>
+                <a href="#" class="login-button hidden" id="logoutButton" style="background-color: #718588; margin-left: 10px;">Logout</a>
+                
+                <button class="navbar-toggler" type="button" style="margin-left: 15px;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Local Bus Station Timetables</h1>
+            <p class="page-subtitle">Find arrival times for buses at your local station</p>
+        </div>
+    </div>
+
+    <main class="main-section">
+        <div class="container">
+            <div class="search-section">
+                <h5>Search for a local bus station</h5>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="stationSearch" placeholder="Enter bus station name..."
+                        list="stationsList">
+                    <datalist id="stationsList">
+                        <!-- Station options will be added dynamically -->
+                    </datalist>
+                    <div class="input-group-append">
+                        <button class="search-btn" id="searchButton">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="station-info" id="stationInfo">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 id="stationName">Station Name</h3>
+                    <button class="refresh-btn" onclick="refreshBusTimes()">
+                        <i class="fas fa-sync-alt"></i> Refresh Times
+                    </button>
+                </div>
+
+                <p class="station-location" id="stationLocation">Station Location</p>
+
+                <div class="mb-4" id="stationFacilities">
+                    <!-- Facilities badges will be dynamically added here -->
+                </div>
+
+                <div class="timetable-table">
+                    <h5>Upcoming Bus Arrivals</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Route</th>
+                                <th>Destination</th>
+                                <th>Arrival Time</th>
+                                <th>Minutes</th>
+                                <th>Platform</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetableBody">
+                            <!-- Table rows will be dynamically populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="no-result-message" id="noResultMessage" style="display: none;">
+                <i class="fas fa-search fa-3x mb-3"></i>
+                <h4>No station found</h4>
+                <p>Please try searching for a different station name.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <!-- Company Info Column -->
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">GoTimely</h5>
+                    <p>Your trusted partner in seamless bus travel. Connecting cities, simplifying journeys.</p>
+                    <div class="social-icons mt-3">
+                        <a href="#" class="footer-social-icon me-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="footer-social-icon me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="footer-social-icon me-3"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="footer-social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links Column -->
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-links">Home</a></li>
+                        <li><a href="#" class="footer-links">Plan Journey</a></li>
+                        <li><a href="#" class="footer-links">Tickets</a></li>
+                        <li><a href="#" class="footer-links">Timetables</a></li>
+                    </ul>
+                </div>
+
+                <!-- Services Column -->
+                <div class="col-md-2 mb-4">
+                    <h5 class="footer-title">Services</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="footer-links">Find Your Bus</a></li>
+                        <li><a href="#" class="footer-links">Book Tickets</a></li>
+                        <li><a href="#" class="footer-links">Luggage Policy</a></li>
+                        <li><a href="#" class="footer-links">Special Assistance</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Column -->
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-envelope me-2"></i>
+                            support@gotimely.com
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-phone me-2"></i>
+                            0800 123 4567
+                        </li>
+                        <li>
+                            <i class="fas fa-map-marker-alt me-2"></i>
+                            123 Hendon Street, Middlesex City, UK
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <hr>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="mb-0">
+                        &copy; 2025 GoTimely. All Rights Reserved.
+                        <a href="#" class="footer-link ms-2">Privacy Policy</a> |
+                        <a href="#" class="footer-link">Terms of Service</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for the timetable functionality -->
+    <script>
+        // List of local bus stations
+        const localBusStations = [
+            {
+                name: "Central Station",
+                location: "City Center, Main Street",
+                facilities: ["Waiting Room", "Toilets", "Cafe", "Ticket Office", "Disabled Access"],
+                platforms: 8
+            },
+            {
+                name: "North Terminal",
+                location: "Northern District, Oak Road",
+                facilities: ["Waiting Room", "Toilets", "Ticket Office"],
+                platforms: 5
+            },
+            {
+                name: "South Terminal",
+                location: "Southern District, Pine Avenue",
+                facilities: ["Waiting Room", "Toilets", "Cafe", "Disabled Access"],
+                platforms: 6
+            },
+            {
+                name: "Riverside",
+                location: "Eastern District, River Street",
+                facilities: ["Waiting Room", "Ticket Office"],
+                platforms: 4
+            },
+            {
+                name: "Westfield",
+                location: "Western District, Maple Drive",
+                facilities: ["Waiting Room", "Toilets", "Disabled Access"],
+                platforms: 5
+            },
+            {
+                name: "University Station",
+                location: "University Campus, Scholar Avenue",
+                facilities: ["Waiting Room", "Cafe", "Disabled Access"],
+                platforms: 3
+            },
+            {
+                name: "Hospital Stop",
+                location: "Medical District, Care Road",
+                facilities: ["Waiting Room", "Toilets", "Disabled Access"],
+                platforms: 4
+            },
+            {
+                name: "Shopping Mall",
+                location: "Retail Park, Commerce Street",
+                facilities: ["Waiting Room", "Toilets", "Cafe", "Ticket Office"],
+                platforms: 6
+            },
+            {
+                name: "Industrial Park",
+                location: "Industrial Zone, Factory Road",
+                facilities: ["Waiting Room"],
+                platforms: 2
+            },
+            {
+                name: "Sports Complex",
+                location: "Recreation Area, Champions Road",
+                facilities: ["Waiting Room", "Toilets", "Ticket Office"],
+                platforms: 4
+            },
+            {
+                name: "Parkside",
+                location: "City Park, Green Avenue",
+                facilities: ["Waiting Room", "Cafe"],
+                platforms: 3
+            },
+            {
+                name: "Town Hall",
+                location: "Civic Quarter, Government Street",
+                facilities: ["Waiting Room", "Toilets", "Disabled Access"],
+                platforms: 5
+            }
+        ];
+
+        // Bus routes for generating random timetables
+        const busRoutes = [
+            { number: "101", destination: "Airport" },
+            { number: "102", destination: "City Center" },
+            { number: "103", destination: "University" },
+            { number: "104", destination: "Shopping Mall" },
+            { number: "105", destination: "Hospital" },
+            { number: "106", destination: "Sports Complex" },
+            { number: "107", destination: "Industrial Park" },
+            { number: "108", destination: "Riverside" },
+            { number: "109", destination: "Town Hall" },
+            { number: "110", destination: "Parkside" },
+            { number: "201", destination: "North Terminal" },
+            { number: "202", destination: "South Terminal" },
+            { number: "203", destination: "East District" },
+            { number: "204", destination: "West District" },
+            { number: "301", destination: "Central Station Express" },
+            { number: "302", destination: "Airport Express" }
+        ];
+
+        // Initialize the page when document is ready
+        $(document).ready(function () {
+            populateStationDatalist();
+            setupEventListeners();
+        });
+
+        // Populate the datalist with station options
+        function populateStationDatalist() {
+            const stationsList = $('#stationsList');
+
+            localBusStations.forEach(station => {
+                stationsList.append(`<option value="${station.name}">`);
+            });
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // Search button click event
+            $('#searchButton').click(function () {
+                searchStation();
+            });
+
+            // Enter key press in search input
+            $('#stationSearch').keypress(function (e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    searchStation();
+                }
+            });
+        }
+
+        // Search for a station
+        function searchStation() {
+            const searchTerm = $('#stationSearch').val().trim();
+
+            if (!searchTerm) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Empty Search',
+                    text: 'Please enter a station name to search.'
+                });
+                return;
+            }
+
+            // Find the station by name (case insensitive)
+            const station = localBusStations.find(s =>
+                s.name.toLowerCase() === searchTerm.toLowerCase() ||
+                s.name.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (station) {
+                displayStationInfo(station);
+                $('#noResultMessage').hide();
+            } else {
+                $('#stationInfo').hide();
+                $('#noResultMessage').show();
+            }
+        }
+
+        // Display station information and timetable
+        function displayStationInfo(station) {
+            // Update station details
+            $('#stationName').text(station.name);
+            $('#stationLocation').text(station.location);
+
+            // Update facilities
+            const facilitiesContainer = $('#stationFacilities');
+            facilitiesContainer.empty();
+
+            station.facilities.forEach(facility => {
+                facilitiesContainer.append(`<span class="facility-badge"><i class="fas fa-check-circle me-1"></i> ${facility}</span>`);
+            });
+
+            // Generate and display bus timetable
+            generateBusTimetable(station);
+
+            // Show the station info section
+            $('#stationInfo').show();
+        }
+
+        // Generate a random bus timetable for the selected station
+        function generateBusTimetable(station) {
+            const timetableBody = $('#timetableBody');
+            timetableBody.empty();
+
+            // Get current time
+            const now = new Date();
+
+            // Generate 10-15 random bus arrivals
+            const numArrivals = Math.floor(Math.random() * 6) + 10;
+            const arrivals = [];
+
+            for (let i = 0; i < numArrivals; i++) {
+                // Random route
+                const route = busRoutes[Math.floor(Math.random() * busRoutes.length)];
+
+                // Random minutes until arrival (1-60 minutes)
+                const minutesUntilArrival = Math.floor(Math.random() * 60) + 1;
+
+                // Calculate arrival time
+                const arrivalTime = new Date(now.getTime() + minutesUntilArrival * 60000);
+                const timeString = arrivalTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                // Random platform
+                const platform = Math.floor(Math.random() * station.platforms) + 1;
+
+                arrivals.push({
+                    route: route.number,
+                    destination: route.destination,
+                    arrivalTime: timeString,
+                    minutesUntilArrival: minutesUntilArrival,
+                    platform: platform
+                });
+            }
+
+            // Sort by minutes until arrival
+            arrivals.sort((a, b) => a.minutesUntilArrival - b.minutesUntilArrival);
+
+            // Add to table
+            arrivals.forEach(arrival => {
+                let rowClass = '';
+                if (arrival.minutesUntilArrival <= 5) {
+                    rowClass = 'arrival-imminent';
+                } else if (arrival.minutesUntilArrival <= 10) {
+                    rowClass = 'arrival-soon';
+                }
+
+                timetableBody.append(`
+                    <tr class="${rowClass}">
+                        <td>${arrival.route}</td>
+                        <td>${arrival.destination}</td>
+                        <td>${arrival.arrivalTime}</td>
+                        <td>${arrival.minutesUntilArrival} min</td>
+                        <td>Platform ${arrival.platform}</td>
+                    </tr>
+                `);
+            });
+        }
+
+        // Refresh bus times when button is clicked
+        function refreshBusTimes() {
+            const stationName = $('#stationName').text();
+            const station = localBusStations.find(s => s.name === stationName);
+
+            if (station) {
+                generateBusTimetable(station);
+
+                // Show a toast notification
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Timetable Updated',
+                    text: 'Bus arrival times have been refreshed.',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

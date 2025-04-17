@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey Details</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/Frontend/CSS/styles.css">
+
+    <style>
+        .journey-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .journey-option:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .journey-option.selected {
+            border: 2px solid #4A4E69;
+        }
+
+        .big-continue-button {
+            background-color: #4A4E69;
+            color: white;
+            font-size: 1.25rem;
+            padding: 15px 30px;
+            margin: 20px 0;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+        }
+
+        .big-continue-button:hover {
+            background-color: #3d4155;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .big-continue-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button {
+            background-color: #6c757d;
+            color: white;
+            font-size: 1.25rem;
+            padding: 15px 30px;
+            margin: 20px 0;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+        }
+
+        .back-button:hover {
+            background-color: #5a6268;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .fare-option {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid #dee2e6;
+            height: 100%;
+        }
+
+        .fare-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .fare-option.selected {
+            border: 2px solid #4A4E69;
+        }
+
+        .fare-option .card-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+
+        .fade-transition {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .fade-in {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand me-auto company-name" href="index.html"><i class="fa-solid fa-bus"></i> GoTimely</a>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">GoTimely</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-center flex-grow-1 pe-3">
+                            <li class="nav-item dropdown mx-lg-2">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Bus Timetables
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="coachtimetable.html">Coach Journey Timetable</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="localtimetable.html">Local Bus Stations</a></li>
+                                </ul>
+                            </li>
+    
+                            <li class="nav-item dropdown mx-lg-2">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Services & Information
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="ticketinformation.html">Ticket Information</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="travelessentials.html">Travel essentials</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    
+                <!-- Search area -->
+                <div class="search-container" style="margin-right: 15px;">
+                    <form class="d-flex" role="search">
+                        <input class="form-control search-input me-2" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success search-button" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form>
+                </div>
+    
+                <!-- Authentication buttons - These will be shown/hidden by navbar.js -->
+                <a href="auth.html" class="login-button" id="authButton">Login</a>
+                <a href="userprofile.html" class="login-button hidden" id="profileButton" style="background-color: #4a5759;">My Profile</a>
+                <a href="#" class="login-button hidden" id="logoutButton" style="background-color: #718588; margin-left: 10px;">Logout</a>
+                
+                <button class="navbar-toggler" type="button" style="margin-left: 15px;" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container mt-5 pt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header text-white text-center" style="background-color: #4A4E69;">
+                        <h2>Your Journey Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="text-muted">Journey Information</h5>
+                                <p><strong>From:</strong> <span id="fromLocation"></span></p>
+                                <p><strong>To:</strong> <span id="toLocation"></span></p>
+                                <p><strong>Date:</strong> <span id="journeyDate"></span></p>
+                                <p><strong>Time:</strong> <span id="journeyTime"></span></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-muted">Passenger Details</h5>
+                                <p><strong>Adults:</strong> <span id="adultsCount"></span></p>
+                                <p><strong>Children:</strong> <span id="childrenCount"></span></p>
+                                <p><strong>Journey Type:</strong> <span id="journeyTypeDisplay"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Journeys Section -->
+        <div id="journeysSection" class="fade-transition fade-in">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header text-white text-center" style="background-color: #4A4E69;">
+                            <h2>Outbound Journeys</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="journeyOptions">
+                                <!-- Journey options will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Journey Continue Button -->
+            <div class="row justify-content-center mt-4 mb-5">
+                <div class="col-md-8">
+                    <button id="continueButton" class="big-continue-button">
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fare Options Section (initially hidden) -->
+        <div id="fareOptionsSection" class="fade-transition fade-out" style="display: none;">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header text-white text-center" style="background-color: #4A4E69;">
+                            <h2>Select Your Fare Type</h2>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-center mb-4">Select the fare type that best suits your travel needs.</p>
+
+                            <div class="row row-cols-1 row-cols-md-3 g-4 mb-4">
+                                <!-- Restricted Fare Option -->
+                                <div class="col">
+                                    <div class="card fare-option" data-fare-type="restricted">
+                                        <div class="card-header bg-light text-center">
+                                            <h4>Restricted</h4>
+                                            <h5 class="text-success" style="color: #4A4E69 !important;"
+                                                id="restrictedPrice">£0.00</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="fas fa-times text-danger me-2"></i> No
+                                                    cancellations</li>
+                                                <li class="mb-2"><i class="fas fa-times text-danger me-2"></i> No
+                                                    amendments</li>
+                                                <li><i class="fas fa-check text-success me-2"></i> Lowest price</li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer bg-white border-top-0 text-center">
+                                            <button class="btn btn-outline-primary select-fare"
+                                                style="border-color: #4A4E69; color: #4A4E69">Select</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Standard Fare Option -->
+                                <div class="col">
+                                    <div class="card fare-option" data-fare-type="standard">
+                                        <div class="card-header bg-light text-center">
+                                            <h4>Standard</h4>
+                                            <h5 class="text-success" style="color: #4A4E69 !important;"
+                                                id="standardPrice">£0.00</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="fas fa-times text-danger me-2"></i> No
+                                                    cancellations</li>
+                                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i>
+                                                    Amendments with fee</li>
+                                                <li><i class="fas fa-check text-success me-2"></i> Fair price</li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer bg-white border-top-0 text-center">
+                                            <button class="btn btn-outline-primary select-fare"
+                                                style="border-color: #4A4E69; color: #4A4E69">Select</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Flexible Fare Option -->
+                                <div class="col">
+                                    <div class="card fare-option" data-fare-type="flexible">
+                                        <div class="card-header bg-light text-center">
+                                            <h4>Flexible</h4>
+                                            <h5 class="text-success" style="color: #4A4E69 !important;"
+                                                id="flexiblePrice">£0.00</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <ul class="list-unstyled">
+                                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Free
+                                                    cancellations</li>
+                                                <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Free
+                                                    amendments</li>
+                                                <li><i class="fas fa-info-circle text-primary me-2"></i> Premium price
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="card-footer bg-white border-top-0 text-center">
+                                            <button class="btn btn-outline-primary select-fare"
+                                                style="border-color: #4A4E69; color: #4A4E69">Select</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button id="backToJourneysButton" class="back-button" style="margin: 0;">
+                                        <i class="fas fa-arrow-left"></i> Back to Journeys
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button id="proceedToExtrasButton" class="big-continue-button" disabled
+                                        style="margin: 0;">
+                                        Continue <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Travel Extras Section (initially hidden) -->
+        <div id="travelExtrasSection" class="fade-transition fade-out" style="display: none;">
+            <div class="row justify-content-center mt-4">
+                <div class="col-md-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header text-white text-center" style="background-color: #4A4E69;">
+                            <h2>Travel Extras</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-4">
+                                <h5>Luggage Options</h5>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-suitcase me-2"></i> <strong>Basic luggage allowance
+                                        included:</strong> 1 x large suitcase & 1 x piece of soft hand luggage
+                                </div>
+
+                                <!-- Extra Luggage Options Section -->
+                                <div class="card mt-3">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">Extra Luggage</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-8">
+                                                <p class="mb-0"><i class="fas fa-luggage-cart me-2"></i> Add 1x extra
+                                                    bag</p>
+                                                <small class="text-muted">£6.00 per passenger, per journey</small>
+                                            </div>
+                                            <div class="col-md-4 text-end">
+                                                <div class="input-group">
+                                                    <button class="btn btn-outline-secondary decrease-bags"
+                                                        type="button"><i class="fas fa-minus"></i></button>
+                                                    <input type="text" class="form-control text-center"
+                                                        id="extraBagsCount" value="0" readonly>
+                                                    <button class="btn btn-outline-secondary increase-bags"
+                                                        type="button"><i class="fas fa-plus"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Calculate Extra Cost -->
+                                <div class="alert alert-light border mt-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Extra luggage cost:</span>
+                                        <strong id="extraLuggageCost">£0.00</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <button id="backToFaresButton" class="back-button" style="margin: 0;">
+                                        <i class="fas fa-arrow-left"></i> Back to Fare Options
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button id="proceedToPaymentButton" class="big-continue-button" style="margin: 0;">
+                                        Continue to Payment <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div id="selectFareToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header bg-warning text-dark">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <strong class="me-auto">Action Required</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    Please select a fare option first.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            // Function to get URL parameter
+            function getUrlParameter(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name) || '';
+            }
+
+            // Retrieve journey details
+            const from = getUrlParameter('from');
+            const to = getUrlParameter('to');
+            const date = getUrlParameter('date');
+            const time = getUrlParameter('time');
+            const adults = getUrlParameter('adults');
+            const children = getUrlParameter('children');
+            const journeyType = getUrlParameter('journeyType');
+
+            // Update page elements
+            $('#fromLocation').text(from);
+            $('#toLocation').text(to);
+            $('#journeyDate').text(date);
+            $('#journeyTime').text(time);
+            $('#adultsCount').text(adults);
+            $('#childrenCount').text(children);
+            $('#journeyTypeDisplay').text(journeyType.charAt(0).toUpperCase() + journeyType.slice(1));
+
+            // Variables to store selected journey and fare
+            let selectedJourneyData = null;
+            let selectedFareType = null;
+
+            // Generate nearby journey options
+            function generateJourneyOptions(preferredTime) {
+                // Parse the preferred time
+                const [hours, minutes] = preferredTime.split(':').map(Number);
+
+                // Array to store journey options
+                const journeyOptions = [];
+
+                // Generate 5 options around the preferred time
+                const timeVariations = [-20, -10, 0, 10, 20];
+
+                // Get passenger counts for price calculation
+                const adultCount = parseInt($('#adultsCount').text()) || 1;
+                const childCount = parseInt($('#childrenCount').text()) || 0;
+
+                timeVariations.forEach(variation => {
+                    // Calculate new time
+                    let newMinutes = minutes + variation;
+                    let newHours = hours;
+
+                    // Handle minute overflow/underflow
+                    if (newMinutes >= 60) {
+                        newHours += Math.floor(newMinutes / 60);
+                        newMinutes %= 60;
+                    }
+                    if (newMinutes < 0) {
+                        newHours -= 1;
+                        newMinutes += 60;
+                    }
+
+                    // Ensure hours are within 0-23 range
+                    newHours = (newHours + 24) % 24;
+
+                    // Format time
+                    const formattedTime = `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
+
+                    // Calculate the adult price (range from £20+)
+                    const baseAdultPrice = 20.00; // Base adult ticket price
+                    // Price varies based on time and demand (peak times more expensive)
+                    const adultPriceVariation = Math.abs(variation) * 0.5 + (variation === 0 ? 2 : 0);
+                    const adultPrice = baseAdultPrice + adultPriceVariation;
+
+                    // Child price is fixed at £8
+                    const childPrice = 8.00;
+
+                    // Calculate total price based on passengers
+                    const totalPrice = (adultPrice * adultCount + childPrice * childCount).toFixed(2);
+
+                    journeyOptions.push({
+                        time: formattedTime,
+                        price: totalPrice,
+                        adultPrice: adultPrice.toFixed(2),
+                        childPrice: childPrice.toFixed(2),
+                        duration: '2h 15m', // Sample duration
+                        busCompany: variation === 0 ? 'National Express' : 'Megabus'
+                    });
+                });
+
+                // Sort options by time
+                journeyOptions.sort((a, b) => {
+                    const [aHours, aMinutes] = a.time.split(':').map(Number);
+                    const [bHours, bMinutes] = b.time.split(':').map(Number);
+                    return aHours * 60 + aMinutes - (bHours * 60 + bMinutes);
+                });
+
+                // Render journey options
+                const $journeyOptionsContainer = $('#journeyOptions');
+                $journeyOptionsContainer.empty();
+
+                journeyOptions.forEach((option, index) => {
+                    const $optionCard = $(`
+        <div class="card journey-option mb-3 ${option.time === preferredTime ? 'selected' : ''}" data-time="${option.time}" data-price="${option.price}">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="card-title">${option.time} Departure</h5>
+                    <p class="card-text text-muted">
+                        ${option.busCompany} | Duration: ${option.duration}
+                    </p>
+                </div>
+                <div class="text-end">
+                    <h4 class="text-success" style="color: #4f772d !important;">£${option.price}</h4>
+                    <p class="text-muted small mb-1">Total price</p>
+                    <button class="btn btn-sm select-journey" style="border-color: #22223B; backg-color: #6096ba">
+                        ${option.time === preferredTime ? 'Preferred' : 'Select'}
+                    </button>
+                </div>
+            </div>
+        </div>
+        `);
+
+                    $journeyOptionsContainer.append($optionCard);
+                });
+
+                // Set the first journey as selected if none selected
+                if ($('.journey-option.selected').length === 0) {
+                    $('.journey-option:first').addClass('selected');
+                    $('.journey-option:first .select-journey').text('Preferred');
+                }
+            }
+
+            // Generate journey options based on preferred time
+            generateJourneyOptions(time);
+
+            // Select journey option
+            $(document).on('click', '.journey-option, .journey-option .select-journey', function (event) {
+                const $optionCard = $(this).hasClass('journey-option') ?
+                    $(this) :
+                    $(this).closest('.journey-option');
+
+                // If already selected, do nothing
+                if ($optionCard.hasClass('selected')) {
+                    return;
+                }
+
+                // Remove selected class from all options
+                $('.journey-option').removeClass('selected');
+                $('.select-journey').text('Select');
+
+                // Add selected class to clicked option
+                $optionCard.addClass('selected');
+                $optionCard.find('.select-journey').text('Preferred');
+
+                // Update selected journey data
+                selectedJourneyData = {
+                    time: $optionCard.data('time'),
+                    price: $optionCard.data('price')
+                };
+
+                // Stop event propagation if clicking the button
+                if (!$(this).hasClass('journey-option')) {
+                    event.stopPropagation();
+                }
+            });
+
+            // Continue button action to show fare options
+            $('#continueButton').click(function () {
+                // Get selected journey
+                const selectedJourney = $('.journey-option.selected');
+                if (selectedJourney.length) {
+                    // Store selected journey data
+                    const selectedTime = selectedJourney.data('time');
+                    const selectedPrice = parseFloat(selectedJourney.data('price'));
+
+                    selectedJourneyData = {
+                        time: selectedTime,
+                        price: selectedPrice
+                    };
+
+                    // Calculate and update fare prices
+                    const basePrice = selectedJourneyData.price;
+                    const restrictedPrice = (basePrice * 0.85).toFixed(2); // 15% discount
+                    const standardPrice = basePrice.toFixed(2); // Standard price
+                    const flexiblePrice = (basePrice * 1.25).toFixed(2); // 25% premium
+
+                    // Update fare option prices
+                    $('#restrictedPrice').text(`£${restrictedPrice}`);
+                    $('#standardPrice').text(`£${standardPrice}`);
+                    $('#flexiblePrice').text(`£${flexiblePrice}`);
+
+                    // Transition between sections
+                    $('#journeysSection').addClass('fade-out');
+                    setTimeout(function () {
+                        $('#journeysSection').hide();
+                        $('#fareOptionsSection').show().removeClass('fade-out').addClass('fade-in');
+                    }, 400);
+                } else {
+                    alert('Please select a journey option first');
+                }
+            });
+
+            // Back button action
+            $('#backToJourneysButton').click(function () {
+                $('#fareOptionsSection').removeClass('fade-in').addClass('fade-out');
+                setTimeout(function () {
+                    $('#fareOptionsSection').hide();
+                    $('#journeysSection').show().removeClass('fade-out').addClass('fade-in');
+                }, 400);
+
+                // Reset selected fare
+                $('.fare-option').removeClass('selected');
+                $('.select-fare').text('Select');
+                selectedFareType = null;
+                $('#proceedToExtrasButton').prop('disabled', true);
+            });
+
+            // Select fare option
+            $(document).on('click', '.fare-option, .fare-option .select-fare', function (event) {
+                const $optionCard = $(this).hasClass('fare-option') ?
+                    $(this) :
+                    $(this).closest('.fare-option');
+
+                // Remove selected class from all options
+                $('.fare-option').removeClass('selected');
+                $('.select-fare').text('Select');
+
+                // Add selected class to clicked option
+                $optionCard.addClass('selected');
+                $optionCard.find('.select-fare').text('Selected');
+
+                // Store selected fare type
+                selectedFareType = $optionCard.data('fare-type');
+
+                // Enable proceed button
+                $('#proceedToExtrasButton').prop('disabled', false);
+
+                // Stop event propagation if clicking the button
+                if (!$(this).hasClass('fare-option')) {
+                    event.stopPropagation();
+                }
+            });
+
+            // Proceed to extras button action
+            $('#proceedToExtrasButton').click(function () {
+                if (selectedFareType) {
+                    // Transition to travel extras section
+                    $('#fareOptionsSection').removeClass('fade-in').addClass('fade-out');
+                    setTimeout(function () {
+                        $('#fareOptionsSection').hide();
+                        $('#travelExtrasSection').show().removeClass('fade-out').addClass('fade-in');
+                    }, 400);
+                } else {
+                    // Show toast instead of alert
+                    const selectFareToast = new bootstrap.Toast(document.getElementById('selectFareToast'));
+                    selectFareToast.show();
+                }
+            });
+
+            // Back to fares button action
+            $('#backToFaresButton').click(function () {
+                $('#travelExtrasSection').removeClass('fade-in').addClass('fade-out');
+                setTimeout(function () {
+                    $('#travelExtrasSection').hide();
+                    $('#fareOptionsSection').show().removeClass('fade-out').addClass('fade-in');
+                }, 400);
+            });
+
+            // Handle extra bags counter
+            $('.increase-bags').click(function () {
+                let currentCount = parseInt($('#extraBagsCount').val());
+                const passengerCount = parseInt($('#adultsCount').text()) + parseInt($('#childrenCount').text());
+                if (currentCount < passengerCount * 2) { // Limit extra bags to 2 per passenger
+                    currentCount++;
+                    $('#extraBagsCount').val(currentCount);
+                    updateExtraLuggageCost();
+                }
+            });
+
+            $('.decrease-bags').click(function () {
+                let currentCount = parseInt($('#extraBagsCount').val());
+                if (currentCount > 0) {
+                    currentCount--;
+                    $('#extraBagsCount').val(currentCount);
+                    updateExtraLuggageCost();
+                }
+            });
+
+            // Function to update extra luggage cost
+            function updateExtraLuggageCost() {
+                const extraBags = parseInt($('#extraBagsCount').val());
+                const costPerBag = 6.00;
+                const totalExtraCost = extraBags * costPerBag;
+                $('#extraLuggageCost').text(`£${totalExtraCost.toFixed(2)}`);
+            }
+
+            $('#proceedToPaymentButton').click(function () {
+                const extraBags = parseInt($('#extraBagsCount').val());
+                const extraBagsCost = extraBags * 6.00;
+                const farePrice = $('#' + selectedFareType + 'Price').text().replace('£', '');
+                const totalPrice = (parseFloat(farePrice) + extraBagsCost).toFixed(2);
+
+                // Create payment confirmation modal content
+                const modalHTML = `
+    <div class="modal fade" id="paymentConfirmModal" tabindex="-1" aria-labelledby="paymentConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="paymentConfirmModalLabel">Confirm Your Purchase</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Journey Summary</h5>
+              </div>
+              <div class="card-body">
+                <p><strong>From:</strong> ${$('#fromLocation').text()}</p>
+                <p><strong>To:</strong> ${$('#toLocation').text()}</p>
+                <p><strong>Date:</strong> ${$('#journeyDate').text()}</p>
+                <p><strong>Time:</strong> ${selectedJourneyData.time}</p>
+                <p><strong>Passengers:</strong> ${$('#adultsCount').text()} adult(s), ${$('#childrenCount').text()} child(ren)</p>
+              </div>
+            </div>
+            
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Price Details</h5>
+              </div>
+              <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>${selectedFareType.charAt(0).toUpperCase() + selectedFareType.slice(1)} fare:</span>
+                  <strong>£${farePrice}</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Extra bags (${extraBags}):</span>
+                  <strong>£${extraBagsCost.toFixed(2)}</strong>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                  <h5>Total:</h5>
+                  <h5 class="text-success">£${totalPrice}</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="confirmPaymentBtn" style="background-color: #4A4E69;">
+              Continue to Payment <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    `;
+
+                // Add modal to body if it doesn't exist
+                if ($('#paymentConfirmModal').length === 0) {
+                    $('body').append(modalHTML);
+                }
+
+                // Show the modal
+                const paymentConfirmModal = new bootstrap.Modal(document.getElementById('paymentConfirmModal'));
+                paymentConfirmModal.show();
+
+                // Handle the confirm payment button click
+                $('#confirmPaymentBtn').off('click').on('click', function () {
+                    // Create URL with parameters for payment page
+                    const params = new URLSearchParams({
+                        from: $('#fromLocation').text(),
+                        to: $('#toLocation').text(),
+                        date: $('#journeyDate').text(),
+                        time: selectedJourneyData.time,
+                        fareType: selectedFareType,
+                        extraBags: extraBags,
+                        totalPrice: totalPrice
+                    });
+
+                    // Redirect to payment page
+                    window.location.href = `payment.html?${params.toString()}`;
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

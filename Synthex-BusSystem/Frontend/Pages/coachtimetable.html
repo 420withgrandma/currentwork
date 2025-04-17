@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoTimely - Coach Journey Timetable</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/Frontend/CSS/styles.css">
+
+    <!-- Additional custom styles -->
+    <style>
+        /* Page-specific styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-header {
+            background-color: #f9eae1;
+            padding: 120px 0 30px;
+            text-align: center;
+        }
+
+        .page-title {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .page-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .timetable-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+        }
+
+        .timetable-table th {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .timetable-table .available {
+            color: green;
+            font-weight: bold;
+        }
+
+        .timetable-table .limited {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .timetable-table .sold-out {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .timetable-table tr:hover td {
+            background-color: #f9f9f9;
+        }
+
+        .main-section {
+            min-height: calc(100vh - 300px);
+            padding: 20px 0;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-name {
+            color: #2c3e50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand me-auto company-name" href="index.html"><i class="fa-solid fa-bus"></i> GoTimely</a>
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasNavbarLabel">GoTimely</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Coach Journey Timetable</h1>
+            <p class="page-subtitle">Find coach departures and arrivals throughout the UK</p>
+        </div>
+    </div>
+
+    <main class="main-section">
+        <div class="container">
+            <div class="timetable-container">
+                <table class="table table-bordered timetable-table">
+                    <thead>
+                        <tr>
+                            <th>Departure</th>
+                            <th>Arrival</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Journey Duration</th>
+                            <th>Seats Available</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timetableBody">
+                        <!-- Timetable data will be dynamically populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <!-- Footer content here -->
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Fetch timetable data
+        function fetchTimetable() {
+            fetch('http://localhost:5176/api/timetable')  // Ensure this URL is correct for your API
+                .then(response => response.json())
+                .then(timetableData => {
+                    const timetableBody = $('#timetableBody');
+                    timetableBody.empty();
+                    
+                    if (timetableData.length > 0) {
+                        timetableData.forEach(item => {
+                            timetableBody.append(`
+                                <tr>
+                                    <td>${item.departure}</td>
+                                    <td>${item.arrival}</td>
+                                    <td>${item.departureTime}</td>
+                                    <td>${item.arrivalTime}</td>
+                                    <td>${item.duration}</td>
+                                    <td>${item.seats}</td>
+                                    <td>${item.price}</td>
+                                </tr>
+                            `);
+                        });
+                    } else {
+                        timetableBody.append('<tr><td colspan="7">No timetable data available</td></tr>');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching timetable:', error);
+                    $('#timetableBody').html('<tr><td colspan="7">Error loading timetable</td></tr>');
+                });
+        }
+
+        $(document).ready(function() {
+            // Fetch and display timetable data when the page loads
+            fetchTimetable();
+        });
+    </script>
+</body>
+
+</html>
