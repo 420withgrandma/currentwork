@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "ROmZWMvvLhMIluY9nlxjy+Ip8oXqQiNanWdDyFkDlBU=",
+  "Source": "GoTimelyAPI",
+  "BasePath": "_content/GoTimelyAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
